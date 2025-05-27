@@ -1,0 +1,49 @@
+import profesionales.*
+
+describe "tests"{
+    const uniSanMartin = new Universidad(provincia = "Buenos Aires", honorarioRecomendado = 3500)
+    const uniRosario = new Universidad(provincia = "Santa Fe", honorarioRecomendado = 2800)
+    const uniCorrientes = new Universidad(provincia = "Corrientes", honorarioRecomendado = 4200)
+    const uniHurlingham = new Universidad(provincia = "Buenos Aires", honorarioRecomendado = 8800)
+
+    const juana = new ProfesionalVinculado(universidad = uniRosario)
+    const melina = new ProfesionalAsociado(universidad = uniCorrientes)
+    const rocio = new ProfesionalLibre(universidad = uniHurlingham, honorario = 5000 , provinciasQueTrabaja = #{"Santa Fe", "Cordoba", "Buenos Aires"})
+    const luciana = new ProfesionalLibre(universidad = uniRosario, honorario = 3200, provinciasQueTrabaja = #{"Santa Fe", "Entre Rios"})
+
+    const empresa = new Empresa(honorarioReferencia = 3500)
+
+    method initialize(){
+        empresa.contratarTodos([juana,melina,rocio,luciana])
+    }
+
+    test "Dos de sus profesionales estudiaron en Rosario, uno en Hurlingham, ninguno (o sea cero) en San Martín."{
+        
+        assert.equals(2, empresa.cuantosEstudiaronEn(uniRosario))
+        assert.equals(1, empresa.cuantosEstudiaronEn(uniHurlingham))
+        assert.equals(0, empresa.cuantosEstudiaronEn(uniSanMartin))
+    }
+
+    test "como profesionales caros, solamente a Rocío. "{
+        assert.that(empresa.profesionalesCaros().contains(rocio))
+    }
+
+    test "como universidades formadoras, a las de Rosario, Corrientes y Hurlingham."{
+        assert.that(empresa.universidadesFormadoras().contains(uniRosario))
+        assert.that(empresa.universidadesFormadoras().contains(uniCorrientes))
+        assert.that(empresa.universidadesFormadoras().contains(uniHurlingham))
+    }
+
+    test "como profesional más barato a Juana."{
+        assert.equals(juana, empresa.profesionalMasBarato())
+    }
+
+    test "Esta empresa es de gente acotada. Pero si le agregamos a Luciana dos provincias más (p.ej. Corrientes y Misiones)"{
+        assert.that(empresa.esDeGenteAcotada())
+        luciana.provinciasQueTrabaja().add("Corrientes")
+        luciana.provinciasQueTrabaja().add("Misiones")
+        assert.notThat(empresa.esDeGenteAcotada())
+    }
+
+    
+}
